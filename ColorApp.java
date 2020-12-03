@@ -3,6 +3,9 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -245,7 +248,14 @@ public class ColorApp {
         // frame setup
         frame.add(panel);
         frame.setSize(500, 500);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                FileOut(colors);
+                System.exit(0);
+            }
+        });
+        // frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setTitle("Color Sampler");
         // frame.pack(); figured out this is what was initially messing with my window
         frame.setVisible(true);
@@ -260,7 +270,6 @@ public class ColorApp {
                     colorsList.getSelectedValue().rval = red;
                     colorsList.getSelectedValue().gval = green;
                     colorsList.getSelectedValue().bval = blue;
-                    FileOut(colors);
                 } else {
                     red = colorsList.getSelectedValue().rval;
                     green = colorsList.getSelectedValue().gval;

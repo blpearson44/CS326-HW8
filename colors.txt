@@ -5,7 +5,7 @@ Yellow 255 255 0
 Cyan 0 255 255
 Magenta 255 0 75
 Orange 255 100 0
-Pink 255 20 145
+Pink 255 150 145
 Grey 125 125 125
 Black 0 0 60
 White 255 255 255
