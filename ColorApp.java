@@ -4,7 +4,6 @@ import java.awt.event.*;
 import javax.swing.event.*;
 import java.io.*;
 import java.util.*;
-import java.applet.Applet;
 
 public class ColorApp {
     // private var
@@ -36,8 +35,8 @@ public class ColorApp {
     private JTextField blueText;
 
     // selection list
-    private String[] colors = { "red", "green", "blue" };
-    private JList<String> colorsList;
+    private NamedColor[] colors = new NamedColor[11];
+    private JList<NamedColor> colorsList;
 
     // default color values
     protected int red = 255, green = 255, blue = 255;
@@ -45,7 +44,39 @@ public class ColorApp {
     // JCustom
     protected ColorPallette pallette;
 
-    public ColorApp() {
+    public class NamedColor {
+        public String name;
+        public int rval, gval, bval;
+
+        @Override
+        public String toString() {
+            return name;
+        }
+    }
+
+    public void FileInput(NamedColor[] c) throws IOException {
+        FileInputStream stream = new FileInputStream("colors.txt");
+        InputStreamReader reader = new InputStreamReader(stream);
+        StreamTokenizer tokens = new StreamTokenizer(reader);
+        int numColors = 0;
+
+        while (tokens.nextToken() != StreamTokenizer.TT_EOF) // idk why the one from the lecture slides wont
+        {
+            c[numColors] = new NamedColor();
+            c[numColors].name = (String) tokens.sval;
+            tokens.nextToken();
+            c[numColors].rval = (int) tokens.nval;
+            tokens.nextToken();
+            c[numColors].gval = (int) tokens.nval;
+            tokens.nextToken();
+            c[numColors].bval = (int) tokens.nval;
+            numColors++;
+        }
+        stream.close();
+    }
+
+    public ColorApp() throws IOException {
+        FileInput(colors);
         // set var
         frame = new JFrame();
         panel = new JPanel();
@@ -67,10 +98,13 @@ public class ColorApp {
         minusBlue = new JButton("-");
 
         redText = new JTextField("");
+        redText.setHorizontalAlignment(JTextField.CENTER);
         greenText = new JTextField("");
+        greenText.setHorizontalAlignment(JTextField.CENTER);
         blueText = new JTextField("");
+        blueText.setHorizontalAlignment(JTextField.CENTER);
 
-        colorsList = new JList<String>(colors);
+        colorsList = new JList<NamedColor>(colors);
 
         pallette = new ColorPallette();
 
@@ -124,34 +158,34 @@ public class ColorApp {
         // locations and sizes
         rLabel.setLocation(10, 250);
         rLabel.setSize(40, 40);
-        redText.setLocation(60, 250);
-        redText.setSize(90, 40);
-        plusRed.setLocation(160, 250);
-        plusRed.setSize(90, 40);
-        minusRed.setLocation(260, 250);
+        minusRed.setLocation(70, 250);
         minusRed.setSize(90, 40);
+        redText.setLocation(180, 250);
+        redText.setSize(90, 40);
+        plusRed.setLocation(290, 250);
+        plusRed.setSize(90, 40);
 
         gLabel.setLocation(10, 300);
         gLabel.setSize(40, 40);
-        greenText.setLocation(60, 300);
-        greenText.setSize(90, 40);
-        plusGreen.setLocation(160, 300);
-        plusGreen.setSize(90, 40);
-        minusGreen.setLocation(260, 300);
+        minusGreen.setLocation(70, 300);
         minusGreen.setSize(90, 40);
+        greenText.setLocation(180, 300);
+        greenText.setSize(90, 40);
+        plusGreen.setLocation(290, 300);
+        plusGreen.setSize(90, 40);
 
         bLabel.setLocation(10, 350);
         bLabel.setSize(40, 40);
-        blueText.setLocation(60, 350);
-        blueText.setSize(90, 40);
-        plusBlue.setLocation(160, 350);
-        plusBlue.setSize(90, 40);
-        minusBlue.setLocation(260, 350);
+        minusBlue.setLocation(70, 350);
         minusBlue.setSize(90, 40);
+        blueText.setLocation(180, 350);
+        blueText.setSize(90, 40);
+        plusBlue.setLocation(290, 350);
+        plusBlue.setSize(90, 40);
 
-        save.setLocation(10, 420);
+        save.setLocation(110, 420);
         save.setSize(90, 20);
-        reset.setLocation(110, 420);
+        reset.setLocation(210, 420);
         reset.setSize(90, 20);
         colorsList.setLocation(400, 10);
         colorsList.setSize(90, 480);
@@ -169,7 +203,11 @@ public class ColorApp {
     }
 
     public static void main(String[] str) {
-        new ColorApp();
+        try {
+            new ColorApp();
+        } catch (Exception e) {
+            System.out.println("Whoops");
+        }
     }
 
     private class ColorPallette extends JComponent {
@@ -188,9 +226,17 @@ public class ColorApp {
             if (e.getSource() == save || e.getSource() == reset) {
                 frame.setTitle("Color Sampler");
                 if (e.getSource() == save) {
-
+                    colorsList.getSelectedValue().rval = red;
+                    colorsList.getSelectedValue().gval = green;
+                    colorsList.getSelectedValue().bval = blue;
                 } else {
-
+                    red = colorsList.getSelectedValue().rval;
+                    green = colorsList.getSelectedValue().gval;
+                    blue = colorsList.getSelectedValue().bval;
+                    redText.setText(String.valueOf(red));
+                    greenText.setText(String.valueOf(green));
+                    blueText.setText(String.valueOf(blue));
+                    pallette.repaint();
                 }
 
             } else {
@@ -246,10 +292,20 @@ public class ColorApp {
 
         @Override
         public void valueChanged(ListSelectionEvent e) {
-            // TODO Auto-generated method stub
             if (e.getSource() == colorsList) {
                 frame.setTitle("Color Sampler");
+                if (!e.getValueIsAdjusting()) {
+                    NamedColor temp = (NamedColor) colorsList.getSelectedValue();
+                    red = temp.rval;
+                    green = temp.gval;
+                    blue = temp.bval;
+                    redText.setText(String.valueOf(red));
+                    greenText.setText(String.valueOf(green));
+                    blueText.setText(String.valueOf(blue));
+                    pallette.repaint();
+                }
             }
         }
     }
+
 }
