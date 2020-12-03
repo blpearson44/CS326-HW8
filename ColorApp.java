@@ -6,6 +6,10 @@ import java.io.*;
 import java.util.*;
 
 public class ColorApp {
+    // default values
+    private String filename = "colors.txt";
+    private int numColors = 11;
+
     // private var
     // frame and panel
     private JFrame frame;
@@ -35,7 +39,7 @@ public class ColorApp {
     private JTextField blueText;
 
     // selection list
-    private NamedColor[] colors = new NamedColor[11];
+    private NamedColor[] colors = new NamedColor[numColors];
     private JList<NamedColor> colorsList;
 
     // default color values
@@ -55,7 +59,7 @@ public class ColorApp {
     }
 
     public void FileInput(NamedColor[] c) throws IOException {
-        FileInputStream stream = new FileInputStream("colors.txt");
+        FileInputStream stream = new FileInputStream(filename);
         InputStreamReader reader = new InputStreamReader(stream);
         StreamTokenizer tokens = new StreamTokenizer(reader);
         int numColors = 0;
@@ -229,6 +233,7 @@ public class ColorApp {
                     colorsList.getSelectedValue().rval = red;
                     colorsList.getSelectedValue().gval = green;
                     colorsList.getSelectedValue().bval = blue;
+                    FileOut(colors);
                 } else {
                     red = colorsList.getSelectedValue().rval;
                     green = colorsList.getSelectedValue().gval;
@@ -240,9 +245,9 @@ public class ColorApp {
                 }
 
             } else {
-                frame.setTitle("Color Sampler*");
                 if (e.getSource() == plusRed) {
                     if (red <= 250) {
+                        frame.setTitle("Color Sampler*");
                         red += 5;
                         redText.setText(String.valueOf(red));
                         pallette.repaint();
@@ -250,6 +255,7 @@ public class ColorApp {
                 }
                 if (e.getSource() == minusRed) {
                     if (red >= 5) {
+                        frame.setTitle("Color Sampler*");
                         red -= 5;
                         redText.setText(String.valueOf(red));
                         pallette.repaint();
@@ -257,6 +263,7 @@ public class ColorApp {
                 }
                 if (e.getSource() == plusGreen) {
                     if (green <= 250) {
+                        frame.setTitle("Color Sampler*");
                         green += 5;
                         greenText.setText(String.valueOf(green));
                         pallette.repaint();
@@ -264,6 +271,7 @@ public class ColorApp {
                 }
                 if (e.getSource() == minusGreen) {
                     if (green >= 5) {
+                        frame.setTitle("Color Sampler*");
                         green -= 5;
                         greenText.setText(String.valueOf(green));
                         pallette.repaint();
@@ -271,6 +279,7 @@ public class ColorApp {
                 }
                 if (e.getSource() == plusBlue) {
                     if (blue <= 250) {
+                        frame.setTitle("Color Sampler*");
                         blue += 5;
                         blueText.setText(String.valueOf(blue));
                         pallette.repaint();
@@ -278,6 +287,7 @@ public class ColorApp {
                 }
                 if (e.getSource() == minusBlue) {
                     if (blue >= 5) {
+                        frame.setTitle("Color Sampler*");
                         blue -= 5;
                         blueText.setText(String.valueOf(blue));
                         pallette.repaint();
@@ -308,4 +318,17 @@ public class ColorApp {
         }
     }
 
+    public void FileOut(NamedColor[] c) {
+        try {
+            FileOutputStream ostream = new FileOutputStream(filename); // Save any changes on close
+            PrintWriter writer = new PrintWriter(ostream);
+            for (int i = 0; i < numColors; i++) {
+                writer.println(c[i].name + " " + c[i].rval + " " + c[i].gval + " " + c[i].bval);
+            }
+            writer.flush();
+            ostream.close();
+        } catch (IOException f) {
+            System.out.println("File write error");
+        }
+    }
 }
