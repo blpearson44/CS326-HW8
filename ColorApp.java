@@ -1,9 +1,24 @@
-import java.awt.*;
-import javax.swing.*;
-import java.awt.event.*;
-import javax.swing.event.*;
-import java.io.*;
-import java.util.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.io.StreamTokenizer;
+
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 
 public class ColorApp {
     // default values
@@ -48,16 +63,30 @@ public class ColorApp {
     // JCustom
     protected ColorPallette pallette;
 
+    // create class to store color values with name
     public class NamedColor {
         public String name;
         public int rval, gval, bval;
 
-        @Override
+        @Override // for the purposes of putting it in the JList
         public String toString() {
             return name;
         }
     }
 
+    // custom JComponent to draw the pallette
+    private class ColorPallette extends JComponent {
+        private static final long serialVersionUID = 1L;
+
+        public void paint(Graphics graph) {
+            Dimension d = getSize();
+            graph.setColor(new Color(red, green, blue, 255));
+            graph.fillRect(0, 0, d.width, d.height);
+        }
+    }
+
+    // I/O
+    // In
     public void FileInput(NamedColor[] c) throws IOException {
         FileInputStream stream = new FileInputStream(filename);
         InputStreamReader reader = new InputStreamReader(stream);
@@ -79,8 +108,24 @@ public class ColorApp {
         stream.close();
     }
 
+    // Out
+    public void FileOut(NamedColor[] c) {
+        try {
+            FileOutputStream ostream = new FileOutputStream(filename); // Save any changes on close
+            PrintWriter writer = new PrintWriter(ostream);
+            for (int i = 0; i < numColors; i++) {
+                writer.println(c[i].name + " " + c[i].rval + " " + c[i].gval + " " + c[i].bval);
+            }
+            writer.flush();
+            ostream.close();
+        } catch (IOException f) {
+            System.out.println("File write error");
+        }
+    }
+
     public ColorApp() throws IOException {
         FileInput(colors);
+
         // set var
         frame = new JFrame();
         panel = new JPanel();
@@ -206,24 +251,6 @@ public class ColorApp {
         frame.setVisible(true);
     }
 
-    public static void main(String[] str) {
-        try {
-            new ColorApp();
-        } catch (Exception e) {
-            System.out.println("Whoops");
-        }
-    }
-
-    private class ColorPallette extends JComponent {
-        private static final long serialVersionUID = 1L;
-
-        public void paint(Graphics graph) {
-            Dimension d = getSize();
-            graph.setColor(new Color(red, green, blue, 255));
-            graph.fillRect(0, 0, d.width, d.height);
-        }
-    }
-
     // For button presses
     private class ActionHandler implements ActionListener {
         public void actionPerformed(ActionEvent e) {
@@ -318,17 +345,12 @@ public class ColorApp {
         }
     }
 
-    public void FileOut(NamedColor[] c) {
+    public static void main(String[] args) {
         try {
-            FileOutputStream ostream = new FileOutputStream(filename); // Save any changes on close
-            PrintWriter writer = new PrintWriter(ostream);
-            for (int i = 0; i < numColors; i++) {
-                writer.println(c[i].name + " " + c[i].rval + " " + c[i].gval + " " + c[i].bval);
-            }
-            writer.flush();
-            ostream.close();
-        } catch (IOException f) {
-            System.out.println("File write error");
+            new ColorApp();
+        } catch (Exception e) {
+            System.out.println("Whoops");
         }
     }
+
 }
