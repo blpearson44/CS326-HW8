@@ -1,3 +1,10 @@
+
+/*
+Ben Pearson
+CS 326 HW8, Color Sampler
+colors.txt (or use a different txt and update filename) must be put in the same directory as ColorApp.class and if the number
+of colors is changed then update numColors to match
+*/
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
