@@ -1,7 +1,10 @@
 import java.awt.*;
 import javax.swing.*;
-import javax.swing.event.*;
 import java.awt.event.*;
+import javax.swing.event.*;
+import java.io.*;
+import java.util.*;
+import java.applet.Applet;
 
 public class ColorApp {
     // private var
@@ -28,15 +31,19 @@ public class ColorApp {
     private JButton minusBlue;
 
     // text fields
-    private JTextField red;
-    private JTextField green;
-    private JTextField blue;
+    private JTextField redText;
+    private JTextField greenText;
+    private JTextField blueText;
 
     // selection list
     private String[] colors = { "red", "green", "blue" };
     private JList<String> colorsList;
 
-    private int r = 255, g = 255, b = 255;
+    // default color values
+    protected int red = 255, green = 255, blue = 255;
+
+    // JCustom
+    protected ColorPallette pallette;
 
     public ColorApp() {
         // set var
@@ -59,15 +66,17 @@ public class ColorApp {
         plusBlue = new JButton("+");
         minusBlue = new JButton("-");
 
-        red = new JTextField("");
-        green = new JTextField("");
-        blue = new JTextField("");
+        redText = new JTextField("");
+        greenText = new JTextField("");
+        blueText = new JTextField("");
 
         colorsList = new JList<String>(colors);
 
-        red.setText(String.valueOf(r));
-        green.setText(String.valueOf(g));
-        blue.setText(String.valueOf(b));
+        pallette = new ColorPallette();
+
+        redText.setText(String.valueOf(red));
+        greenText.setText(String.valueOf(green));
+        blueText.setText(String.valueOf(blue));
         // set bounds for objects
 
         // create button triggers
@@ -104,17 +113,19 @@ public class ColorApp {
         panel.add(plusBlue);
         panel.add(minusBlue);
 
-        panel.add(red);
-        panel.add(green);
-        panel.add(blue);
+        panel.add(redText);
+        panel.add(greenText);
+        panel.add(blueText);
 
         panel.add(colorsList);
+
+        panel.add(pallette);
 
         // locations and sizes
         rLabel.setLocation(10, 250);
         rLabel.setSize(40, 40);
-        red.setLocation(60, 250);
-        red.setSize(90, 40);
+        redText.setLocation(60, 250);
+        redText.setSize(90, 40);
         plusRed.setLocation(160, 250);
         plusRed.setSize(90, 40);
         minusRed.setLocation(260, 250);
@@ -122,8 +133,8 @@ public class ColorApp {
 
         gLabel.setLocation(10, 300);
         gLabel.setSize(40, 40);
-        green.setLocation(60, 300);
-        green.setSize(90, 40);
+        greenText.setLocation(60, 300);
+        greenText.setSize(90, 40);
         plusGreen.setLocation(160, 300);
         plusGreen.setSize(90, 40);
         minusGreen.setLocation(260, 300);
@@ -131,8 +142,8 @@ public class ColorApp {
 
         bLabel.setLocation(10, 350);
         bLabel.setSize(40, 40);
-        blue.setLocation(60, 350);
-        blue.setSize(90, 40);
+        blueText.setLocation(60, 350);
+        blueText.setSize(90, 40);
         plusBlue.setLocation(160, 350);
         plusBlue.setSize(90, 40);
         minusBlue.setLocation(260, 350);
@@ -145,12 +156,15 @@ public class ColorApp {
         colorsList.setLocation(400, 10);
         colorsList.setSize(90, 480);
 
+        pallette.setLocation(10, 10);
+        pallette.setSize(380, 230);
+
         // frame setup
         frame.add(panel);
         frame.setSize(500, 500);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setTitle("Color Sampler");
-        // frame.pack();
+        // frame.pack(); figured out this is what was initially messing with my window
         frame.setVisible(true);
     }
 
@@ -163,7 +177,7 @@ public class ColorApp {
 
         public void paint(Graphics graph) {
             Dimension d = getSize();
-            graph.setColor(new Color(r, g, b, 255));
+            graph.setColor(new Color(red, green, blue, 255));
             graph.fillRect(0, 0, d.width, d.height);
         }
     }
@@ -182,39 +196,45 @@ public class ColorApp {
             } else {
                 frame.setTitle("Color Sampler*");
                 if (e.getSource() == plusRed) {
-                    if (r <= 250) {
-                        r += 5;
-                        red.setText(String.valueOf(r));
+                    if (red <= 250) {
+                        red += 5;
+                        redText.setText(String.valueOf(red));
+                        pallette.repaint();
                     }
                 }
                 if (e.getSource() == minusRed) {
-                    if (r >= 5) {
-                        r -= 5;
-                        red.setText(String.valueOf(r));
+                    if (red >= 5) {
+                        red -= 5;
+                        redText.setText(String.valueOf(red));
+                        pallette.repaint();
                     }
                 }
                 if (e.getSource() == plusGreen) {
-                    if (g <= 250) {
-                        g += 5;
-                        green.setText(String.valueOf(g));
+                    if (green <= 250) {
+                        green += 5;
+                        greenText.setText(String.valueOf(green));
+                        pallette.repaint();
                     }
                 }
                 if (e.getSource() == minusGreen) {
-                    if (g >= 5) {
-                        g -= 5;
-                        green.setText(String.valueOf(g));
+                    if (green >= 5) {
+                        green -= 5;
+                        greenText.setText(String.valueOf(green));
+                        pallette.repaint();
                     }
                 }
                 if (e.getSource() == plusBlue) {
-                    if (b <= 250) {
-                        b += 5;
-                        blue.setText(String.valueOf(b));
+                    if (blue <= 250) {
+                        blue += 5;
+                        blueText.setText(String.valueOf(blue));
+                        pallette.repaint();
                     }
                 }
                 if (e.getSource() == minusBlue) {
-                    if (b >= 5) {
-                        b -= 5;
-                        blue.setText(String.valueOf(b));
+                    if (blue >= 5) {
+                        blue -= 5;
+                        blueText.setText(String.valueOf(blue));
+                        pallette.repaint();
                     }
                 }
             }
